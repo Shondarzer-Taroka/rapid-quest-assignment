@@ -120,12 +120,12 @@ async function run() {
     //   try {
     //     // const ordersCollection = db.collection('shopifyOrders');
 
-    //     const salesGrowthData = await ordersCollection.aggregate([
-    //       {
-    //         $addFields: {
-    //           created_at_date: { $dateFromString: { dateString: "$created_at" } }
-    //         }
-    //       },
+        const salesGrowthData = await ordersCollection.aggregate([
+          {
+            $addFields: {
+              created_at_date: { $dateFromString: { dateString: "$created_at" } }
+            }
+          },
     //       {
     //         $facet: {
     //           daily: [
@@ -250,7 +250,7 @@ async function run() {
     //           ]
     //         }
     //       }
-    //     ]).toArray();
+        ]).toArray();
 
     //     res.json(salesGrowthData[0]);
     //   } catch (error) {
