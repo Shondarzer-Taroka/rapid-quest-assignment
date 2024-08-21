@@ -313,6 +313,54 @@ async function run() {
 
 
 
+    // app.get('/api/new-customers', async (req, res) => {
+    //   try {
+    //     // Daily Aggregation
+    //     const dailyCustomers = await customersCollection.aggregate([
+    //       {
+    //         $group: {
+    //           _id: { $dateToString: { format: '%Y-%m-%d', date: { $dateFromString: { dateString: '$created_at' } } } },
+    //           newCustomers: { $sum: 1 }
+    //         }
+    //       },
+    //       { $sort: { _id: 1 } } // Sort by date ascending
+    //     ]).toArray();
+
+    //     // Monthly Aggregation
+    //     const monthlyCustomers = await customersCollection.aggregate([
+    //       {
+    //         $group: {
+    //           _id: { $dateToString: { format: '%Y-%m', date: { $dateFromString: { dateString: '$created_at' } } } },
+    //           newCustomers: { $sum: 1 }
+    //         }
+    //       },
+    //       { $sort: { _id: 1 } } // Sort by date ascending
+    //     ]).toArray();
+
+    //     // Yearly Aggregation
+    //     const yearlyCustomers = await customersCollection.aggregate([
+    //       {
+    //         $group: {
+    //           _id: { $dateToString: { format: '%Y', date: { $dateFromString: { dateString: '$created_at' } } } },
+    //           newCustomers: { $sum: 1 }
+    //         }
+    //       },
+    //       { $sort: { _id: 1 } } // Sort by date ascending
+    //     ]).toArray();
+
+    //     res.json({ daily: dailyCustomers, monthly: monthlyCustomers, yearly: yearlyCustomers });
+    //   } catch (error) {
+    //     console.error('Error during aggregation:', error); // Log error details
+    //     res.status(500).json({ error: 'Failed to fetch new customers data', details: error.message });
+    //   }
+    // });
+
+
+    // Number of Repeat Customers:
+
+
+
+
     app.get('/api/new-customers', async (req, res) => {
       try {
         // Daily Aggregation
@@ -325,7 +373,7 @@ async function run() {
           },
           { $sort: { _id: 1 } } // Sort by date ascending
         ]).toArray();
-
+    
         // Monthly Aggregation
         const monthlyCustomers = await customersCollection.aggregate([
           {
@@ -336,7 +384,24 @@ async function run() {
           },
           { $sort: { _id: 1 } } // Sort by date ascending
         ]).toArray();
-
+    
+        // Quarterly Aggregation
+        const quarterlyCustomers = await customersCollection.aggregate([
+          {
+            $group: {
+              _id: {
+                $concat: [
+                  { $substr: [{ $year: { $dateFromString: { dateString: '$created_at' } } }, 0, 4] },
+                  '-Q',
+                  { $toString: { $ceil: { $divide: [{ $month: { $dateFromString: { dateString: '$created_at' } } }, 3] } } }
+                ]
+              },
+              newCustomers: { $sum: 1 }
+            }
+          },
+          { $sort: { _id: 1 } } // Sort by quarter ascending
+        ]).toArray();
+    
         // Yearly Aggregation
         const yearlyCustomers = await customersCollection.aggregate([
           {
@@ -345,18 +410,17 @@ async function run() {
               newCustomers: { $sum: 1 }
             }
           },
-          { $sort: { _id: 1 } } // Sort by date ascending
+          { $sort: { _id: 1 } } // Sort by year ascending
         ]).toArray();
-
-        res.json({ daily: dailyCustomers, monthly: monthlyCustomers, yearly: yearlyCustomers });
+    
+        // Send the response
+        res.json({ daily: dailyCustomers, monthly: monthlyCustomers, quarterly: quarterlyCustomers, yearly: yearlyCustomers });
       } catch (error) {
         console.error('Error during aggregation:', error); // Log error details
         res.status(500).json({ error: 'Failed to fetch new customers data', details: error.message });
       }
     });
-
-
-    // Number of Repeat Customers:
+    
 
     app.get('/api/repeat-customers', async (req, res) => {
       try {

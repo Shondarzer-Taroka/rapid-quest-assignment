@@ -63,7 +63,7 @@ const NewCustomersChart = () => {
     }
   };
 
-// console.log(customersData);
+console.log(customersData);
 
   return (
     <>
@@ -81,8 +81,8 @@ const NewCustomersChart = () => {
 
           <h3>Yearly New Customers</h3>
           <Line data={prepareChartData(customersData.yearly, 'Yearly')} options={chartOptions} />
-          {/* <h3>Quarterly New Customers</h3> */}
-          {/* <Line data={prepareChartData(customersData.quarterly, 'Quarterly')} options={chartOptions} /> */}
+          <h3>Quarterly New Customers</h3>
+          <Line data={prepareChartData(customersData.quarterly, 'Quarterly')} options={chartOptions} />
         </div>
       )}
     </>
