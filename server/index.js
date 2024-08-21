@@ -615,60 +615,60 @@ async function run() {
     
     // // 
 
-    // app.get('/api/customer-distribution', async (req, res) => {
+    app.get('/api/customer-distribution', async (req, res) => {
 
-    //   const distribution = await customersCollection.aggregate([
-    //     { $group: { _id: "$default_address.city", customerCount: { $sum: 1 } } },
-    //     { $sort: { customerCount: -1 } } // Sort by the number of customers in descending order
-    //   ]).toArray();
+      const distribution = await customersCollection.aggregate([
+        { $group: { _id: "$default_address.city", customerCount: { $sum: 1 } } },
+        { $sort: { customerCount: -1 } } // Sort by the number of customers in descending order
+      ]).toArray();
 
-    //   res.json(distribution); // Send the result as JSON
-    // })
-
-
-
-
-    // //  Customer Lifetime Value by Cohorts:
+      res.json(distribution); // Send the result as JSON
+    })
 
 
 
-    // app.get('/api/customer-lifetime-value', async (req, res) => {
-    //   try {
-    //     // Step 1: Group by customer and find the earliest purchase date for each customer
-    //     const lifetimeValueByCohort = await ordersCollection.aggregate([
-    //       {
-    //         $group: {
-    //           _id: "$customer_id",
-    //           firstPurchase: { $min: "$created_at" }, // Get the earliest order date for each customer
-    //           totalSpent: { $sum: "$total_price_set.shop_money.amount" } // Sum of all orders for this customer
-    //         }
-    //       },
-    //       {
-    //         // Step 2: Extract the first purchase month (YYYY-MM) for each customer
-    //         $project: {
-    //           _id: 1,
-    //           firstPurchaseMonth: { $dateToString: { format: "%Y-%m", date: { $dateFromString: { dateString: "$firstPurchase" } } } },
-    //           totalSpent: 1
-    //         }
-    //       },
-    //       {
-    //         // Step 3: Group by first purchase month to calculate cohort CLV and customer count
-    //         $group: {
-    //           _id: "$firstPurchaseMonth", // Group by cohort (first purchase month)
-    //           lifetimeValue: { $sum: "$totalSpent" }, // Sum of total spent by all customers in this cohort
-    //           customerCount: { $sum: 1 } // Count the number of customers in this cohort
-    //         }
-    //       },
-    //       { $sort: { _id: 1 } } // Sort by cohort (month) in ascending order
-    //     ]).toArray();
+
+    //  Customer Lifetime Value by Cohorts:
+
+
+
+    app.get('/api/customer-lifetime-value', async (req, res) => {
+      try {
+        // Step 1: Group by customer and find the earliest purchase date for each customer
+        const lifetimeValueByCohort = await ordersCollection.aggregate([
+          {
+            $group: {
+              _id: "$customer_id",
+              firstPurchase: { $min: "$created_at" }, // Get the earliest order date for each customer
+              totalSpent: { $sum: "$total_price_set.shop_money.amount" } // Sum of all orders for this customer
+            }
+          },
+          {
+            // Step 2: Extract the first purchase month (YYYY-MM) for each customer
+            $project: {
+              _id: 1,
+              firstPurchaseMonth: { $dateToString: { format: "%Y-%m", date: { $dateFromString: { dateString: "$firstPurchase" } } } },
+              totalSpent: 1
+            }
+          },
+          {
+            // Step 3: Group by first purchase month to calculate cohort CLV and customer count
+            $group: {
+              _id: "$firstPurchaseMonth", // Group by cohort (first purchase month)
+              lifetimeValue: { $sum: "$totalSpent" }, // Sum of total spent by all customers in this cohort
+              customerCount: { $sum: 1 } // Count the number of customers in this cohort
+            }
+          },
+          { $sort: { _id: 1 } } // Sort by cohort (month) in ascending order
+        ]).toArray();
     
-    //     // Send the response
-    //     res.json(lifetimeValueByCohort);
-    //   } catch (error) {
-    //     console.error('Error fetching customer lifetime value:', error.message);
-    //     res.status(500).json({ error: 'Server error' });
-    //   }
-    // });
+        // Send the response
+        res.json(lifetimeValueByCohort);
+      } catch (error) {
+        console.error('Error fetching customer lifetime value:', error.message);
+        res.status(500).json({ error: 'Server error' });
+      }
+    });
     
 
 
