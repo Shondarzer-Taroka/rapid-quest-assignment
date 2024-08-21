@@ -114,9 +114,9 @@ async function run() {
 
 
 
-   // // growth
+   // // growth 
 
-    // app.get('/api/sales-growth', async (req, res) => {
+    app.get('/api/sales-growth', async (req, res) => {
     //   try {
     //     // const ordersCollection = db.collection('shopifyOrders');
 
@@ -257,7 +257,7 @@ async function run() {
     //     console.error(error);
     //     res.status(500).json({ error: 'Failed to fetch sales growth data' });
     //   }
-    // });
+    });
 
 
 
