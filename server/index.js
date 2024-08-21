@@ -126,48 +126,48 @@ async function run() {
               created_at_date: { $dateFromString: { dateString: "$created_at" } }
             }
           },
-    //       {
-    //         $facet: {
-    //           daily: [
-    //             {
-    //               $group: {
-    //                 _id: { $dateToString: { format: "%Y-%m-%d", date: "$created_at_date" } },
-    //                 totalSales: { $sum: { $toDouble: "$total_price_set.shop_money.amount" } }
-    //               }
-    //             },
-    //             { $sort: { _id: 1 } },
-    //             {
-    //               $setWindowFields: {
-    //                 sortBy: { _id: 1 },
-    //                 output: {
-    //                   previousSales: {
-    //                     $shift: {
-    //                       output: "$totalSales",
-    //                       by: -1
-    //                     }
-    //                   }
-    //                 }
-    //               }
-    //             },
-    //             {
-    //               $project: {
-    //                 _id: 1,
-    //                 totalSales: 1,
-    //                 growthRate: {
-    //                   $cond: {
-    //                     if: { $eq: ["$previousSales", 0] },
-    //                     then: null,
-    //                     else: {
-    //                       $multiply: [
-    //                         { $divide: [{ $subtract: ["$totalSales", "$previousSales"] }, "$previousSales"] },
-    //                         100
-    //                       ]
-    //                     }
-    //                   }
-    //                 }
-    //               }
-    //             }
-    //           ],
+          {
+            $facet: {
+              daily: [
+                {
+                  $group: {
+                    _id: { $dateToString: { format: "%Y-%m-%d", date: "$created_at_date" } },
+                    totalSales: { $sum: { $toDouble: "$total_price_set.shop_money.amount" } }
+                  }
+                },
+                { $sort: { _id: 1 } },
+                {
+                  $setWindowFields: {
+                    sortBy: { _id: 1 },
+                    output: {
+                      previousSales: {
+                        $shift: {
+                          output: "$totalSales",
+                          by: -1
+                        }
+                      }
+                    }
+                  }
+                },
+                {
+                  $project: {
+                    _id: 1,
+                    totalSales: 1,
+                    growthRate: {
+                      $cond: {
+                        if: { $eq: ["$previousSales", 0] },
+                        then: null,
+                        else: {
+                          $multiply: [
+                            { $divide: [{ $subtract: ["$totalSales", "$previousSales"] }, "$previousSales"] },
+                            100
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              ],
     //           monthly: [
     //             {
     //               $group: {
@@ -245,8 +245,8 @@ async function run() {
     //                     }
     //                   }
     //                 }
-    //               }
-    //             }
+                  }
+                }
     //           ]
     //         }
     //       }
