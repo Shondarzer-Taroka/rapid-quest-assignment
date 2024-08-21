@@ -208,48 +208,48 @@ async function run() {
                   }
                 }
               ],
-    //           yearly: [
-    //             {
-    //               $group: {
-    //                 _id: { $dateToString: { format: "%Y", date: "$created_at_date" } },
-    //                 totalSales: { $sum: { $toDouble: "$total_price_set.shop_money.amount" } }
-    //               }
-    //             },
-    //             { $sort: { _id: 1 } },
-    //             {
-    //               $setWindowFields: {
-    //                 sortBy: { _id: 1 },
-    //                 output: {
-    //                   previousSales: {
-    //                     $shift: {
-    //                       output: "$totalSales",
-    //                       by: -1
-    //                     }
-    //                   }
-    //                 }
-    //               }
-    //             },
-    //             {
-    //               $project: {
-    //                 _id: 1,
-    //                 totalSales: 1,
-    //                 growthRate: {
-    //                   $cond: {
-    //                     if: { $eq: ["$previousSales", 0] },
-    //                     then: null,
-    //                     else: {
-    //                       $multiply: [
-    //                         { $divide: [{ $subtract: ["$totalSales", "$previousSales"] }, "$previousSales"] },
-    //                         100
-    //                       ]
-    //                     }
-    //                   }
-    //                 }
+              yearly: [
+                {
+                  $group: {
+                    _id: { $dateToString: { format: "%Y", date: "$created_at_date" } },
+                    totalSales: { $sum: { $toDouble: "$total_price_set.shop_money.amount" } }
+                  }
+                },
+                { $sort: { _id: 1 } },
+                {
+                  $setWindowFields: {
+                    sortBy: { _id: 1 },
+                    output: {
+                      previousSales: {
+                        $shift: {
+                          output: "$totalSales",
+                          by: -1
+                        }
+                      }
+                    }
+                  }
+                },
+                {
+                  $project: {
+                    _id: 1,
+                    totalSales: 1,
+                    growthRate: {
+                      $cond: {
+                        if: { $eq: ["$previousSales", 0] },
+                        then: null,
+                        else: {
+                          $multiply: [
+                            { $divide: [{ $subtract: ["$totalSales", "$previousSales"] }, "$previousSales"] },
+                            100
+                          ]
+                        }
+                      }
+                    }
                   }
                 }
-    //           ]
-    //         }
-    //       }
+              ]
+            }
+          }
         ]).toArray();
 
     //     res.json(salesGrowthData[0]);
