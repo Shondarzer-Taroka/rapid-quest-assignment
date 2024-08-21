@@ -497,119 +497,119 @@ async function run() {
     });
 
 
-    // // Number of Repeat Customers:
+    // Number of Repeat Customers:
 
-    // app.get('/api/repeat-customers', async (req, res) => {
-    //   try {
-    //     // Daily Aggregation
-    //     const dailyRepeatCustomers = await ordersCollection.aggregate([
-    //       {
-    //         $addFields: {
-    //           created_at_date: {
-    //             $dateFromString: { dateString: "$created_at" }
-    //           }
-    //         }
-    //       },
-    //       {
-    //         $group: {
-    //           _id: { customer_id: "$customer_id", day: { $dateToString: { format: "%Y-%m-%d", date: "$created_at_date" } } },
-    //           purchaseCount: { $sum: 1 }
-    //         }
-    //       },
-    //       {
-    //         $match: { purchaseCount: { $gt: 1 } }
-    //       },
-    //       { $sort: { "_id.day": 1 } }
-    //     ]).toArray();
+    app.get('/api/repeat-customers', async (req, res) => {
+      try {
+        // Daily Aggregation
+        const dailyRepeatCustomers = await ordersCollection.aggregate([
+          {
+            $addFields: {
+              created_at_date: {
+                $dateFromString: { dateString: "$created_at" }
+              }
+            }
+          },
+          {
+            $group: {
+              _id: { customer_id: "$customer_id", day: { $dateToString: { format: "%Y-%m-%d", date: "$created_at_date" } } },
+              purchaseCount: { $sum: 1 }
+            }
+          },
+          {
+            $match: { purchaseCount: { $gt: 1 } }
+          },
+          { $sort: { "_id.day": 1 } }
+        ]).toArray();
     
-    //     // Monthly Aggregation
-    //     const monthlyRepeatCustomers = await ordersCollection.aggregate([
-    //       {
-    //         $addFields: {
-    //           created_at_date: {
-    //             $dateFromString: { dateString: "$created_at" }
-    //           }
-    //         }
-    //       },
-    //       {
-    //         $group: {
-    //           _id: { customer_id: "$customer_id", month: { $dateToString: { format: "%Y-%m", date: "$created_at_date" } } },
-    //           purchaseCount: { $sum: 1 }
-    //         }
-    //       },
-    //       {
-    //         $match: { purchaseCount: { $gt: 1 } }
-    //       },
-    //       { $sort: { "_id.month": 1 } }
-    //     ]).toArray();
+        // Monthly Aggregation
+        const monthlyRepeatCustomers = await ordersCollection.aggregate([
+          {
+            $addFields: {
+              created_at_date: {
+                $dateFromString: { dateString: "$created_at" }
+              }
+            }
+          },
+          {
+            $group: {
+              _id: { customer_id: "$customer_id", month: { $dateToString: { format: "%Y-%m", date: "$created_at_date" } } },
+              purchaseCount: { $sum: 1 }
+            }
+          },
+          {
+            $match: { purchaseCount: { $gt: 1 } }
+          },
+          { $sort: { "_id.month": 1 } }
+        ]).toArray();
     
-    //     // Quarterly Aggregation
-    //     const quarterlyRepeatCustomers = await ordersCollection.aggregate([
-    //       {
-    //         $addFields: {
-    //           created_at_date: {
-    //             $dateFromString: { dateString: "$created_at" }
-    //           }
-    //         }
-    //       },
-    //       {
-    //         $group: {
-    //           _id: {
-    //             customer_id: "$customer_id",
-    //             quarter: {
-    //               $concat: [
-    //                 { $toString: { $year: "$created_at_date" } }, // Get the year part
-    //                 "-Q",
-    //                 {
-    //                   $toString: {
-    //                     $ceil: { $divide: [{ $month: "$created_at_date" }, 3] } // Get the quarter by dividing the month
-    //                   }
-    //                 }
-    //               ]
-    //             }
-    //           },
-    //           purchaseCount: { $sum: 1 }
-    //         }
-    //       },
-    //       {
-    //         $match: { purchaseCount: { $gt: 1 } }
-    //       },
-    //       { $sort: { "_id.quarter": 1 } }
-    //     ]).toArray();
+        // Quarterly Aggregation
+        const quarterlyRepeatCustomers = await ordersCollection.aggregate([
+          {
+            $addFields: {
+              created_at_date: {
+                $dateFromString: { dateString: "$created_at" }
+              }
+            }
+          },
+          {
+            $group: {
+              _id: {
+                customer_id: "$customer_id",
+                quarter: {
+                  $concat: [
+                    { $toString: { $year: "$created_at_date" } }, // Get the year part
+                    "-Q",
+                    {
+                      $toString: {
+                        $ceil: { $divide: [{ $month: "$created_at_date" }, 3] } // Get the quarter by dividing the month
+                      }
+                    }
+                  ]
+                }
+              },
+              purchaseCount: { $sum: 1 }
+            }
+          },
+          {
+            $match: { purchaseCount: { $gt: 1 } }
+          },
+          { $sort: { "_id.quarter": 1 } }
+        ]).toArray();
     
-    //     // Yearly Aggregation
-    //     const yearlyRepeatCustomers = await ordersCollection.aggregate([
-    //       {
-    //         $addFields: {
-    //           created_at_date: {
-    //             $dateFromString: { dateString: "$created_at" }
-    //           }
-    //         }
-    //       },
-    //       {
-    //         $group: {
-    //           _id: { customer_id: "$customer_id", year: { $dateToString: { format: "%Y", date: "$created_at_date" } } },
-    //           purchaseCount: { $sum: 1 }
-    //         }
-    //       },
-    //       {
-    //         $match: { purchaseCount: { $gt: 1 } }
-    //       },
-    //       { $sort: { "_id.year": 1 } }
-    //     ]).toArray();
+        // Yearly Aggregation
+        const yearlyRepeatCustomers = await ordersCollection.aggregate([
+          {
+            $addFields: {
+              created_at_date: {
+                $dateFromString: { dateString: "$created_at" }
+              }
+            }
+          },
+          {
+            $group: {
+              _id: { customer_id: "$customer_id", year: { $dateToString: { format: "%Y", date: "$created_at_date" } } },
+              purchaseCount: { $sum: 1 }
+            }
+          },
+          {
+            $match: { purchaseCount: { $gt: 1 } }
+          },
+          { $sort: { "_id.year": 1 } }
+        ]).toArray();
     
-    //     // Send response with all intervals
-    //     res.json({
-    //       daily: dailyRepeatCustomers,
-    //       monthly: monthlyRepeatCustomers,
-    //       quarterly: quarterlyRepeatCustomers,
-    //       yearly: yearlyRepeatCustomers
-    //     });
-    //   } catch (error) {
-    //     console.error("Error fetching repeat customers data:", error);
-    //     res.status(500).json({ error: 'Failed to fetch repeat customers data' });
-    //   }
-    // });
+        // Send response with all intervals
+        res.json({
+          daily: dailyRepeatCustomers,
+          monthly: monthlyRepeatCustomers,
+          quarterly: quarterlyRepeatCustomers,
+          yearly: yearlyRepeatCustomers
+        });
+      } catch (error) {
+        console.error("Error fetching repeat customers data:", error);
+        res.status(500).json({ error: 'Failed to fetch repeat customers data' });
+      }
+    });
     
     
     
