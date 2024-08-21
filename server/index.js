@@ -454,47 +454,47 @@ async function run() {
 
 
 
-    // app.get('/api/new-customers', async (req, res) => {
-    //   try {
-    //     // Daily Aggregation
-    //     const dailyCustomers = await customersCollection.aggregate([
-    //       {
-    //         $group: {
-    //           _id: { $dateToString: { format: '%Y-%m-%d', date: { $dateFromString: { dateString: '$created_at' } } } },
-    //           newCustomers: { $sum: 1 }
-    //         }
-    //       },
-    //       { $sort: { _id: 1 } } // Sort by date ascending
-    //     ]).toArray();
+    app.get('/api/new-customers', async (req, res) => {
+      try {
+        // Daily Aggregation
+        const dailyCustomers = await customersCollection.aggregate([
+          {
+            $group: {
+              _id: { $dateToString: { format: '%Y-%m-%d', date: { $dateFromString: { dateString: '$created_at' } } } },
+              newCustomers: { $sum: 1 }
+            }
+          },
+          { $sort: { _id: 1 } } // Sort by date ascending
+        ]).toArray();
 
-    //     // Monthly Aggregation
-    //     const monthlyCustomers = await customersCollection.aggregate([
-    //       {
-    //         $group: {
-    //           _id: { $dateToString: { format: '%Y-%m', date: { $dateFromString: { dateString: '$created_at' } } } },
-    //           newCustomers: { $sum: 1 }
-    //         }
-    //       },
-    //       { $sort: { _id: 1 } } // Sort by date ascending
-    //     ]).toArray();
+        // Monthly Aggregation
+        const monthlyCustomers = await customersCollection.aggregate([
+          {
+            $group: {
+              _id: { $dateToString: { format: '%Y-%m', date: { $dateFromString: { dateString: '$created_at' } } } },
+              newCustomers: { $sum: 1 }
+            }
+          },
+          { $sort: { _id: 1 } } // Sort by date ascending
+        ]).toArray();
 
-    //     // Yearly Aggregation
-    //     const yearlyCustomers = await customersCollection.aggregate([
-    //       {
-    //         $group: {
-    //           _id: { $dateToString: { format: '%Y', date: { $dateFromString: { dateString: '$created_at' } } } },
-    //           newCustomers: { $sum: 1 }
-    //         }
-    //       },
-    //       { $sort: { _id: 1 } } // Sort by date ascending
-    //     ]).toArray();
+        // Yearly Aggregation
+        const yearlyCustomers = await customersCollection.aggregate([
+          {
+            $group: {
+              _id: { $dateToString: { format: '%Y', date: { $dateFromString: { dateString: '$created_at' } } } },
+              newCustomers: { $sum: 1 }
+            }
+          },
+          { $sort: { _id: 1 } } // Sort by date ascending
+        ]).toArray();
 
-    //     res.json({ daily: dailyCustomers, monthly: monthlyCustomers, yearly: yearlyCustomers });
-    //   } catch (error) {
-    //     console.error('Error during aggregation:', error); // Log error details
-    //     res.status(500).json({ error: 'Failed to fetch new customers data', details: error.message });
-    //   }
-    // });
+        res.json({ daily: dailyCustomers, monthly: monthlyCustomers, yearly: yearlyCustomers });
+      } catch (error) {
+        console.error('Error during aggregation:', error); // Log error details
+        res.status(500).json({ error: 'Failed to fetch new customers data', details: error.message });
+      }
+    });
 
 
     // // Number of Repeat Customers:
